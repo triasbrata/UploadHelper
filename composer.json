@@ -1,0 +1,16 @@
+{
+    "name": "triasbrata/uploadhelper",
+    "description": "Class untuk melakukan upload dan mempermudah proses upload",
+    "authors": [
+        {
+            "name": "Trias Bratayudhana",
+            "email": "triasbrata@gmail.com"
+        }
+    ],
+    "autoload": {
+	    "psr-4":{
+	    	"Bitdev\\UploadHelper":"src/"
+	    }
+    },
+    "require": {}
+}
