@@ -1,6 +1,8 @@
 {
     "name": "triasbrata/uploadhelper",
     "description": "Class untuk melakukan upload dan mempermudah proses upload",
+    "license":"Apache-2.0",
+    "type": "project",
     "authors": [
         {
             "name": "Trias Bratayudhana",
@@ -8,9 +10,11 @@
         }
     ],
     "autoload": {
-	    "psr-4":{
-	    	"Bitdev\\UploadHelper":"src/"
-	    }
+        "psr-4":{
+            "Bitdev\\UploadHelper\\":"src/"
+        }
     },
-    "require": {}
+    "require": {
+        "php": ">=5.5.9"
+    }
 }
