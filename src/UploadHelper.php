@@ -45,7 +45,7 @@ class UploadHelper
 		if(!isset($this->files[$field])) return '';
 		return $this->files[$field];
 	}
-	public function run($fields,RepositorieInterface $model,FormRequest $r)
+	public function run($fields,$model,FormRequest $r)
 	{
 		$this->setModel($model);
 		if(!is_array($fields))
