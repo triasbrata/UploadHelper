@@ -5,22 +5,19 @@ namespace Bitdev\UploadHelper;
 use BadMethodCallException;
 use Config;
 use Illuminate\Support\ViewErrorBag;
-use Illuminate\Support\MessageBag;
 use Session;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Repositories\RepositorieInterface;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UploadHelper 
 {
-	private $path;
-	private $filename;
-	private $size;
-	private $countError;
-	private $files = [];
-	private $update;
-	private $model;
+	protected $path;
+	protected $size;
+	protected $countError;
+	protected $files = [];
+	protected $update;
+	protected $model;
 
 	function __construct($size=1028) {
 		$this->size = $size;
@@ -32,7 +29,8 @@ class UploadHelper
 	}
 	public function setPath($path)
 	{
-		$this->path = $path;
+
+		$this->path = str_finish($path,"/");
 	}
 	public function setUpdate($value)
 	{
@@ -75,21 +73,21 @@ class UploadHelper
 			throw new BadMethodCallException("Model must be set");
 		
 	}
-	private function registerFile($field,$nameFile)
+	protected function registerFile($field,$nameFile)
 	{
 
 		$this->files[$field] = $nameFile;
 	}
-	private function isUpdate()
+	protected function isUpdate()
 	{
 		return $this->update;
 	}
 	
-	private function getFilePath($name)
+	protected function getFilePath($name)
 	{
 		return "{$this->path}/$name";
 	}
-	private function isExist($name)
+	protected function isExist($name)
 	{
 		if($name !== ''){
 			
@@ -97,11 +95,11 @@ class UploadHelper
 		}
 		return false;
 	}
-	private function randName($file)
+	protected function randName($file)
 	{
 		return str_random(40).".{$file->guessExtension()}";	
 	}
-	private function generateName($field,$file=null)
+	protected function generateName($field,$file=null)
 	{
 		$newName = null;
 		$nameModel = $this->model->{$field};
@@ -117,7 +115,7 @@ class UploadHelper
 		}
 		return $newName;
 	}
-	private function hasError()
+	protected function hasError()
 	{
 		$e = function (){
 			$_e = $this->countError;
@@ -129,13 +127,13 @@ class UploadHelper
 		}
 		return false;
 	}
-	private function makeError($error,$key='default')
+	protected function makeError($error,$key='default')
 	{
 		$this->countError++;
 		Session::flash('errors',Session::get('errors',new ViewErrorBag)->add($key,$error));
 
 	}
-	private function validate($files)
+	protected function validate($files)
 	{
 		if(!is_array($files)) throw new BadMethodCallException("Argument files in method UploadHelper::validate must array");
 		foreach ($files as $field => $file) {
@@ -150,7 +148,7 @@ class UploadHelper
 		}
 		return !$this->hasError();
 	}
-	private function upload($file,$name)
+	protected function upload($file,$name)
 	{	
 		$file->move($this->path,$name);
 		return $name;
