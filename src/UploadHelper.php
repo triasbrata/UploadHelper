@@ -9,6 +9,7 @@ use Session;
 use App\Repositories\RepositorieInterface;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\MessageBag;
 
 class UploadHelper 
 {
@@ -18,6 +19,7 @@ class UploadHelper
 	protected $files = [];
 	protected $update;
 	protected $model;
+	protected $error;
 
 	function __construct($size=1028) {
 		$this->size = $size;
@@ -62,6 +64,7 @@ class UploadHelper
 			}
 			return true;
 		}
+		$this->packingError();
 		return false;
 
 	}
@@ -72,6 +75,12 @@ class UploadHelper
 		else if($this->isUpdate())
 			throw new BadMethodCallException("Model must be set");
 		
+	}
+	protected function packingError()
+	{
+		$key = 'upload';
+		$error = new MessageBag($this->error);
+		Session::flash('errors',Session::get('errors',new ViewErrorBag)->put($key,$error));
 	}
 	protected function registerFile($field,$nameFile)
 	{
@@ -127,11 +136,10 @@ class UploadHelper
 		}
 		return false;
 	}
-	protected function makeError($error,$key='default')
+	protected function makeError($error)
 	{
 		$this->countError++;
-		Session::flash('errors',Session::get('errors',new ViewErrorBag)->add($key,$error));
-
+		$this->error[] = $error;
 	}
 	protected function validate($files)
 	{
@@ -139,10 +147,10 @@ class UploadHelper
 		foreach ($files as $field => $file) {
 			if(! is_null($file) ){
 				if(!$file->isValid())
-					$this->makeError("File pada Bidang isian $field tidak valid");
+					$this->makeError("File $field is invalid");
 			}else{
 				if(! $this->update){
-					$this->makeError("File pada Bidang isian $field wajib di isi");	
+					$this->makeError("File $field is required");	
 				}
 			}
 		}
